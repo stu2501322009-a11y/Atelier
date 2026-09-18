@@ -1,12 +1,15 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
+export interface AuthUser {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 export interface AuthResponse {
   token: string;
-  user: {
-    id: string;
-    email: string;
-    name?: string;
-  };
+  user: AuthUser;
 }
 
 export interface ApiError {
@@ -48,10 +51,10 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
 
-  signup: (name: string, email: string, password: string) =>
+  signup: (firstName: string, lastName: string, email: string, password: string) =>
     request<AuthResponse>('/auth/signup', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ firstName, lastName, email, password }),
     }),
 
   googleLogin: (idToken: string) =>
@@ -62,4 +65,16 @@ export const api = {
 
   getCurrentUser: () =>
     request<AuthResponse>('/auth/me', { method: 'GET' }),
+
+  requestPasswordReset: (email: string) =>
+    request<{ message: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+
+  resetPassword: (token: string, newPassword: string) =>
+    request<{ message: string }>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    }),
 };

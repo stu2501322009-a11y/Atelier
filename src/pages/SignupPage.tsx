@@ -7,7 +7,8 @@ export default function SignupPage() {
   const { signup, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -30,7 +31,7 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await signup(name, email, password);
+      await signup(firstName, lastName, email, password);
       navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Грешка при регистрация');
@@ -92,18 +93,33 @@ export default function SignupPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm text-neutral-700 mb-1">
-              Име и фамилия
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-brand-red transition-colors"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="firstName" className="block text-sm text-neutral-700 mb-1">
+                Име
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-brand-red transition-colors"
+              />
+            </div>
+            <div>
+              <label htmlFor="lastName" className="block text-sm text-neutral-700 mb-1">
+                Фамилия
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-brand-red transition-colors"
+              />
+            </div>
           </div>
           <div>
             <label htmlFor="email" className="block text-sm text-neutral-700 mb-1">

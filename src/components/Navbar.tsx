@@ -36,7 +36,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <span className="hidden sm:flex items-center gap-1.5 text-sm text-neutral-600">
             <User size={16} />
-            {user.name || user.email}
+            {[user.firstName, user.lastName].filter(Boolean).join(' ') || user.email}
           </span>
           <button
             onClick={handleLogout}

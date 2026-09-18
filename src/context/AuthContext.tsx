@@ -1,17 +1,11 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { api, type AuthResponse } from '@/lib/api';
-
-interface AuthUser {
-  id: string;
-  email: string;
-  name?: string;
-}
+import { api, type AuthResponse, type AuthUser } from '@/lib/api';
 
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
   loginWithGoogle: (idToken: string) => Promise<void>;
   logout: () => void;
 }
@@ -51,8 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const signup = useCallback(
-    async (name: string, email: string, password: string) => {
-      const data = await api.signup(name, email, password);
+    async (firstName: string, lastName: string, email: string, password: string) => {
+      const data = await api.signup(firstName, lastName, email, password);
       handleAuthSuccess(data);
     },
     [handleAuthSuccess]

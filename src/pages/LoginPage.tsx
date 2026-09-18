@@ -105,6 +105,14 @@ export default function LoginPage() {
               className="w-full px-4 py-2 border border-neutral-300 rounded focus:outline-none focus:border-brand-red transition-colors"
             />
           </div>
+          <div className="text-right">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-brand-red hover:underline"
+            >
+              Забравена парола?
+            </Link>
+          </div>
           <button
             type="submit"
             disabled={loading}
