@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакти - fixed by Teodora Gateva Atelier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=Parisienne&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* --- Запазваме оригиналния Layout --- */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        .contact-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .contact-form .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .contact-form .form-group input,
+        .contact-form .form-group textarea,
+        .contact-form .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: 'Radley', serif;
+            font-size: 1rem;
+        }
+        .contact-info p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Скрито поле за адрес (появява се с анимация) --- */
+        #address-group {
+            display: none; /* Скрито по подразбиране */
+            background: #f9f9f9;
+            padding: 1rem;
+            border-left: 3px solid var(--brand-red);
+            border-radius: 0 5px 5px 0;
+            margin-bottom: 1.5rem;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ДИЗАЙН ЗА УСПЕШНО ИЗПРАЩАНЕ --- */
+        #success-message {
+            display: none; 
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-top: 5px solid var(--brand-red);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-radius: 5px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-icon-container {
+            width: 80px;
+            height: 80px;
+            background-color: #fdf2f2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .checkmark {
+            color: var(--brand-red);
+            font-size: 3rem;
+            line-height: 1;
+        }
+
+        #success-message h3 {
+            font-family: 'Parisienne', cursive;
+            font-size: 2.5rem;
+            color: var(--brand-black);
+            margin-bottom: 1rem;
+        }
+
+        #success-message p {
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* --- Дизайн за интерактивната карта --- */
+        .map-container {
+            margin-top: 1.5rem;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden; /* Гарантира, че картата няма да излезе извън заоблените ъгли */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Лека сянка за дълбочина */
+            transition: transform 0.3s ease;
+        }
+
+        .map-container:hover {
+            transform: translateY(-2px); /* Лек ефект при посочване с мишката */
+        }
+
+        .map-container iframe {
+            display: block; /* Премахва странното празно пространство под iframe-а */
+            width: 100%;
+            height: 250px; /* Можеш да промениш височината, ако искаш да е по-голяма */
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Свържете се с нас</h1>
+                <p>Имате въпроси или искате да направите заявка?</p>
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="contact-container">
+                
+                <div class="contact-form">
+                    
+                    <div id="success-message">
+                        <div class="success-icon-container">
+                            <span class="checkmark">✔</span>
+                        </div>
+                        <h3>Благодарим Ви!</h3>
+                        <p>Запитването Ви е прието успешно.</p>
+                        <p>Нашият екип ще го прегледа внимателно и ще Ви отговори в рамките на 24 часа.</p>
+                        <button onclick="location.reload();" class="cta-button-secondary" style="margin-top: 1.5rem; cursor: pointer;">Ново запитване</button>
+                    </div>
+
+                    <div id="form-wrapper">
+                        <h2>Изпратете ни запитване</h2>
+                        
+                        <form id="contactForm"
+                            action="https://docs.google.com/forms/d/e/1FAIpQLSfzAFD9gkAY4oge2kMDZKNWVmIRvdLRKrh1XHtuB4jTe2eJew/formResponse" 
+                            method="POST"
+                            target="hidden_iframe"
+                            onsubmit="return handleFormSubmit();">
+                            
+                            <div class="form-group">
+                                <label for="name">Име и Фамилия</label>
+                                <input type="text" id="name" name="entry.571114085" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Имейл</label>
+                                <input type="email" id="email" name="entry.1066617345" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone">Телефон</label>
+                                <input type="tel" id="phone" name="entry.1543951712">
+                            </div>
+
+                            <!-- <div class="form-group">
+                                <label for="service">Относно</label>
+                                <select id="service" name="entry.794299548" required onchange="toggleAddressField()">
+                                    <option value="" disabled selected>Изберете опция</option>
+                                    <option value="Заявка по Куриер">Заявка по Куриер</option>
+                                    <option value="Заявка за посещение в Пловдив">Заявка за посещение в Пловдив</option>
+                                    <option value="Запитване за Ишлеме (B2B)">Запитване за Ишлеме (B2B)</option>
+                                    <option value="Друго">Друго</option>
+                                </select>
+                            </div> -->
+
+                            <div class="form-group" id="address-group">
+                                <label for="address">Адрес за посещение / доставка *</label>
+                                <input type="text" id="address" name="entry.992822760" placeholder="Улица, номер...">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message">Вашето съобщение</label>
+                                <textarea id="message" name="entry.1200978524" rows="6" required></textarea>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="terms" name="terms" required>
+                                <label for="terms">Съгласявам се с <a href="../policy.html" target="_blank">Общите условия</a> и <a href="../privacy.html" target="_blank">Политиката за поверителност</a> на сайта.</label>
+                            </div>
+
+                            <button type="submit" id="submitBtn" class="cta-button">Изпрати</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="contact-info">
+                    <h2>Информация за контакт</h2>
+                    <p><strong>Телефон:</strong><br>
+                        +359 88 671 0201 <br>
+                        +359 88 496 5453
+                    </p>
+                    <p><strong>Имейл:</strong><br>
+                        teodoragatevaatelier@gmail.com
+                    </p>
+                    <p><strong>Работно време:</strong><br>
+                        Понеделник - Петък: 09:00 - 19:00 <br>
+                        Събота: 10:00 - 15:00 <br>
+                        Неделя: почивен ден
+                    </p>
+                    <p><strong>Адрес:</strong><br>
+                        гр. Пловдив, ж.к. Христо Смирненски, ул. "Царевец" 53
+                    </p>
+
+                    <div class="map-container">
+                    <iframe 
+                        src="https://maps.google.com/maps?q=гр.+Пловдив,+ул.+Царевец+53&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="logo">
+            <span class="logo-fixed">fixed</span>
+            <span class="logo-by">by</span>
+            <span class="logo-name">TEODORA GATEVA</span>
+            <span class="logo-atelier">ATELIER</span>
+        </div>
+        <div class="footer-links">
+            <a href="../policy.html">Общи условия</a>
+            <a href="../privacy.html">Политика за поверителност</a>
+        </div>
+        <p>&copy; 2025 fixed by Teodora Gateva Atelier. Всички права запазени.</p>
+    </footer>
+
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) {showSuccessScreen();}"></iframe>
+
+    <script src="../script.js"></script>
+
+    <script>
+        var submitted = false;
+
+        function toggleAddressField() {
+            var serviceSelect = document.getElementById("service");
+            var addressGroup = document.getElementById("address-group");
+            var addressInput = document.getElementById("address");
+            
+            var selectedValue = serviceSelect.value;
+
+            if (selectedValue === "Заявка по Куриер" || selectedValue === "Заявка за посещение в Пловдив") {
+                addressGroup.style.display = "block"; 
+                addressInput.required = true; 
+            } else {
+                addressGroup.style.display = "none";  
+                addressInput.required = false; 
+                addressInput.value = ""; 
+            }
+        }
+
+        function handleFormSubmit() {
+            var btn = document.getElementById('submitBtn');
+            btn.innerText = 'Изпращане...';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            submitted = true;
+            return true;
+        }
+        
+        function showSuccessScreen() {
+            document.getElementById('form-wrapper').style.display = 'none';
+            var successMsg = document.getElementById('success-message');
+            successMsg.style.display = 'block';
+            successMsg.scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+
+        // --- НОВ КОД: ПРЕВОД НА СЪОБЩЕНИЯТА ЗА ГРЕШКИ ---
+        document.addEventListener("DOMContentLoaded", function() {
+            // Взимаме всички input, textarea и select елементи
+            var elements = document.querySelectorAll("input, select, textarea");
+
+            elements.forEach(function(element) {
+                // Когато се опита да събмитне с грешка (invalid event)
+                element.addEventListener("invalid", function() {
+                    this.setCustomValidity(""); // Нулиране за момент
+
+                    if (!this.validity.valid) {
+                        // Проверка за конкретния вид грешка
+                        if (this.validity.valueMissing) {
+                            if (this.type === "checkbox") {
+                                this.setCustomValidity("Моля, съгласете се с условията, за да продължите.");
+                            } else {
+                                this.setCustomValidity("Моля, попълнете това поле.");
+                            }
+                        } else if (this.validity.typeMismatch && this.type === "email") {
+                            this.setCustomValidity("Моля, въведете валиден имейл адрес.");
+                        } else {
+                            this.setCustomValidity("Моля, въведете валидни данни.");
+                        }
+                    }
+                });
+
+                // Когато потребителят започне да пише, махаме грешката
+                element.addEventListener("input", function() {
+                    this.setCustomValidity("");
+                });
+            });
+        });
+    </script>
+</body>
+</html>

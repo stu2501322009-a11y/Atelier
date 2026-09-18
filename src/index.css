@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Radley', serif;
+    color: #333;
+    background-color: #ffffff;
+    line-height: 1.6;
+    font-size: 17px;
+  }
+}
+
+@layer components {
+  .cta-button {
+    @apply inline-block bg-brand-red text-white px-6 py-3 uppercase font-serif rounded transition-all duration-300 hover:bg-brand-black;
+  }
+
+  .cta-button-secondary {
+    @apply inline-block bg-transparent text-brand-red border-2 border-brand-red px-6 py-3 uppercase font-serif rounded transition-all duration-300 hover:bg-brand-red hover:text-white;
+  }
+}
